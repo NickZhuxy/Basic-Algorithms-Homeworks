@@ -1,0 +1,24 @@
+# LaTeX intermediate and temporary files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+
+# Temporary files
+*.dvi
+*.ps
+*.nav
+*.snm
+*.vrb
+*.xdv
+
+# VS Code settings and LaTeX Workshop extension cache
+.vscode/
+*.latexmk
