@@ -25,7 +25,7 @@
     %Put your name and Net ID here
 	\fancyhead[L]{Name: Nick Zhu\\ Net ID: xz4687}
     %Write your collaborators' names here
-    \fancyfoot[L]{Discussion Partners: Jueying Zhu, Siqi Zhu}
+    \fancyfoot[L]{Discussion Partners:}
     %%%%%
 	
     
@@ -336,6 +336,8 @@
     \[
     T(n)=\Theta(n).
     \]
+    
+    \vspace{2mm}
     \\
     \textbf{(b)}
     
@@ -365,14 +367,15 @@
     \sum_{k=0}^{n} k = \frac{n(n+1)}{2} = \Theta(n^2).
     \]
     Thus, the running time of the naive algorithm is $\Theta(n^2)$, which is asymptotically slower than Horner's $\Theta(n)$ method.
+    
+    \vspace{2mm}
     \\
     \textbf{(c)}
-    
     We consider the following loop invariant:
     \[
     \text{At the start of each iteration of the for-loop (lines 2--3), } p = \sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^k.
     \]
-    We want to show that when the loop terminates, $p = \sum_{k=0}^n A[k]\cdot x^k$.
+    We prove that when the loop terminates, $p = \sum_{k=0}^n A[k]\cdot x^k$, i.e., the algorithm correctly computes $P(x)$.
     
     \textbf{Initialization:} \\
     When the loop begins, $i = n$. Then the invariant claims that:

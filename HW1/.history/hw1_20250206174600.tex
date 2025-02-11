@@ -25,7 +25,7 @@
     %Put your name and Net ID here
 	\fancyhead[L]{Name: Nick Zhu\\ Net ID: xz4687}
     %Write your collaborators' names here
-    \fancyfoot[L]{Discussion Partners: Jueying Zhu, Siqi Zhu}
+    \fancyfoot[L]{Discussion Partners:}
     %%%%%
 	
     
@@ -193,7 +193,7 @@
     \text{If } n \text{ is odd:} & f(n)= n+\log n,\quad g(n)=\log n,\quad \frac{f(n)}{g(n)}\sim \frac{n}{\log n}\to \infty.
     \end{array}
     \]
-    Thus, there is no constant \(C\) such that \(f(n)\le C\,g(n)\) for all large \(n\) (so \(f(n)\notin O(g(n))\)). However, \(f(n)\) also does not satisfy the definition of \(\omega(g(n))\) because for even \(n\), \( \lim_{n\to\infty} f(n)/g(n)\) is 0 but not \(\infty\). 
+    Thus, there is no constant \(C\) such that \(f(n)\le C\,g(n)\) for all large \(n\) (so \(f(n)\notin O(g(n))\)). However, \(f(n)\) also does not satisfy the definition of \(\omega(g(n))\) because for even \(n\) the ratio \(f(n)/g(n)\) is arbitrarily small. 
     %Write your solution here!
     
     \newpage
@@ -211,79 +211,6 @@
     \end{enumerate}
     
     \end{tcolorbox}
-    \section*{Solution}
-
-    \textbf{(a)}
-
-    Since both \(f(n)\) and \(g(n)\) are nonnegative,
-    \[
-    \max(f(n),g(n)) =
-    \begin{cases}
-    f(n), & \text{if } f(n)\ge g(n) \\[1mm]
-    g(n), & \text{otherwise}
-    \end{cases}.
-    \]
-    In either case,
-    \[
-    f(n)\le \max(f(n),g(n)) \quad \text{and} \quad g(n)\le \max(f(n),g(n)).
-    \]
-    Adding these two inequalities we have:
-    \[
-    f(n)+g(n) \le 2\max(f(n),g(n)) \quad \Longrightarrow \quad \max(f(n),g(n)) \ge \frac{1}{2}\bigl(f(n)+g(n)\bigr).
-    \]
-    Also, clearly,
-    \[
-    \max(f(n),g(n)) \le f(n)+g(n).
-    \]
-    Thus, we have
-    \[
-    \frac{1}{2}\bigl(f(n)+g(n)\bigr) \le \max(f(n),g(n)) \le f(n)+g(n).
-    \]
-    This shows
-    \[
-    \max(f(n),g(n))=\Theta(f(n)+g(n)),
-    \]
-    with constants \(c_1=\frac{1}{2}\) and \(c_2=1\).
-    \\
-    \textbf{(b)}
-
-    It is always true that
-    \[
-    \min(f(n),g(n))\le f(n)+g(n),
-    \]
-    however, for the equality \(\min(f(n),g(n))=\Theta(f(n)+g(n))\) to hold we would also require a constant \(c>0\) such that
-    \[
-    \min(f(n),g(n)) \ge c\,(f(n)+g(n))
-    \]
-    for all sufficiently large \(n\). We will show a counterexample.
-
-    \medskip
-
-    \underline{Counterexample:}  
-    Let
-    \[
-    f(n)=n \quad \text{and} \quad g(n)=1 \quad \text{for all } n.
-    \]
-    Then,
-    \[
-    \min(f(n),g(n))=\min(n,1)=1,
-    \]
-    and
-    \[
-    f(n)+g(n)=n+1.
-    \]
-    Givin \(\min(f(n),g(n))=\Theta(f(n)+g(n))\), there exist constants \(c_1, c_2>0\) and \(n_0\) such that for all \(n\ge n_0\),
-    \[
-    c_1 (n+1) \le 1 \le c_2 (n+1).
-    \]
-    While the upper bound \(1 \le c_2 (n+1)\) holds for any \(c_2\ge 0\) and large \(n\), the lower bound
-    \[
-    1 \ge c_1 (n+1)
-    \]
-    cannot hold for any fixed \(c_1>0\) as \(n\to\infty\). Thus, the equality does not hold in general and we cannot say that
-    \[
-    \min(f(n),g(n))=\Theta(f(n)+g(n)).
-    \]
     %Write your solution here!
     
     \newpage
@@ -328,89 +255,6 @@
         \end{enumerate}
         
     \end{tcolorbox}
-    \section*{Solution}
-
-    \textbf{(a)}
-    
-    The for loop in \textsc{Horner} iterates from $i=n$ down to $0$, i.e., it makes $n+1$ iterations. In each iteration, a constant number of operations is performed (one multiplication and one addition). Thus, the total running time is proportional to $n+1$. In $\Theta$--notation we have:
-    \[
-    T(n)=\Theta(n).
-    \]
-    \\
-    \textbf{(b)}
-    
-    A naive method to evaluate
-    \[
-    P(x) = \sum_{k=0}^n A[k] \, x^k
-    \]
-    is to compute each term \(A[k] \cdot x^k\) from scratch and sum them. 
-    
-    \bigskip
-    \textsc{NaivePolyEval}$(A, n, x)$:
-    \begin{algorithmic}[1]
-        \STATE $p \gets 0$
-        \FOR{$k = 0$ to $n$}
-            \STATE $term \gets 1$
-            \FOR{$j = 1$ to $k$}
-                \STATE $term \gets term \cdot x$
-            \ENDFOR
-            \STATE $p \gets p + A[k] \cdot term$
-        \ENDFOR
-        \RETURN $p$
-    \end{algorithmic}
-    \bigskip
-    
-    In this algorithm, for each $k$ the inner loop runs $k$ times. Therefore, the total number of multiplications is
-    \[
-    \sum_{k=0}^{n} k = \frac{n(n+1)}{2} = \Theta(n^2).
-    \]
-    Thus, the running time of the naive algorithm is $\Theta(n^2)$, which is asymptotically slower than Horner's $\Theta(n)$ method.
-    \\
-    \textbf{(c)}
-    
-    We consider the following loop invariant:
-    \[
-    \text{At the start of each iteration of the for-loop (lines 2--3), } p = \sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^k.
-    \]
-    We want to show that when the loop terminates, $p = \sum_{k=0}^n A[k]\cdot x^k$.
-    
-    \textbf{Initialization:} \\
-    When the loop begins, $i = n$. Then the invariant claims that:
-    \[
-    p = \sum_{k=0}^{n-(n+1)} A[k+n+1] \cdot x^k.
-    \]
-    Since the upper limit is $n-(n+1) = -1$, the summation is empty and by convention equals $0$. This matches the initialization $p \gets 0$, so the invariant holds initially.
-    
-    \textbf{Maintenance:} \\
-    Suppose the invariant holds at the start of an iteration for some index $i$, so that:
-    \[
-    p = \sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^k.
-    \]
-    In the body of the loop, we update $p$ as follows:
-    \[
-    p \gets A[i] + x \cdot p.
-    \]
-    Substituting the invariant expression into this update gives:
-    \[
-    p = A[i] + x\left(\sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^k\right)
-    = A[i] + \sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^{k+1}.
-    \]
-    Reindex the summation by letting $j = k + 1$. Then when $k = 0$, $j = 1$, and when $k = n-(i+1)$, $j = n-i$. This gives:
-    \[
-    p = A[i] + \sum_{j=1}^{n-i} A[j+i] \cdot x^j 
-      = \sum_{j=0}^{n-i} A[j+i] \cdot x^j,
-    \]
-    where we have written $A[i]$ as the term corresponding to $j=0$. This is exactly the loop invariant for the next iteration (with $i$ replaced by $i-1$).
-    
-    \textbf{Termination:} \\
-    The loop terminates when $i = -1$. At this point, the invariant gives:
-    \[
-    p = \sum_{k=0}^{n-((-1)+1)} A[k+(-1)+1] \cdot x^k
-      = \sum_{k=0}^{n} A[k] \cdot x^k.
-    \]
-    Hence, upon termination, $p = P(x)$.
-    
-    This completes the loop invariant proof that \textsc{Horner} correctly evaluates the polynomial.
     
     
     %Your solution here

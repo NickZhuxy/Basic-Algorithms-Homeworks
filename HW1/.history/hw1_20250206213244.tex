@@ -25,7 +25,7 @@
     %Put your name and Net ID here
 	\fancyhead[L]{Name: Nick Zhu\\ Net ID: xz4687}
     %Write your collaborators' names here
-    \fancyfoot[L]{Discussion Partners: Jueying Zhu, Siqi Zhu}
+    \fancyfoot[L]{Discussion Partners:}
     %%%%%
 	
     
@@ -330,20 +330,31 @@
     \end{tcolorbox}
     \section*{Solution}
 
-    \textbf{(a)}
+    We are given the procedure \textsc{Horner}:
+    \begin{algorithmic}[1]
+        \STATE $p \gets 0$
+        \FOR{$i = n$ downto $0$}
+            \STATE $p \gets A[i] + x \cdot p$
+        \ENDFOR
+        \RETURN $p$
+    \end{algorithmic}
     
-    The for loop in \textsc{Horner} iterates from $i=n$ down to $0$, i.e., it makes $n+1$ iterations. In each iteration, a constant number of operations is performed (one multiplication and one addition). Thus, the total running time is proportional to $n+1$. In $\Theta$--notation we have:
+    \vspace{2mm}
+    \textbf{(a) Running Time of \textsc{Horner}:}
+    
+    The for--loop in \textsc{Horner} iterates from $i=n$ down to $0$, i.e., it makes $n+1$ iterations. In each iteration, a constant number of operations is performed (one multiplication and one addition). Thus, the total running time is proportional to $n+1$. In $\Theta$--notation we have:
     \[
     T(n)=\Theta(n).
     \]
-    \\
-    \textbf{(b)}
     
-    A naive method to evaluate
+    \vspace{2mm}
+    \textbf{(b) Naive Polynomial Evaluation and Its Running Time:}
+    
+    A straightforward (naive) method to evaluate
     \[
     P(x) = \sum_{k=0}^n A[k] \, x^k
     \]
-    is to compute each term \(A[k] \cdot x^k\) from scratch and sum them. 
+    is to compute each term \(A[k] \cdot x^k\) from scratch and sum them. One pseudocode is as follows:
     
     \bigskip
     \textsc{NaivePolyEval}$(A, n, x)$:
@@ -365,53 +376,73 @@
     \sum_{k=0}^{n} k = \frac{n(n+1)}{2} = \Theta(n^2).
     \]
     Thus, the running time of the naive algorithm is $\Theta(n^2)$, which is asymptotically slower than Horner's $\Theta(n)$ method.
-    \\
-    \textbf{(c)}
     
-    We consider the following loop invariant:
+    \vspace{2mm}
+    \textbf{(c) Correctness via the Loop Invariant:}
+    
+    We are given the following loop invariant for \textsc{Horner}:
     \[
-    \text{At the start of each iteration of the for-loop (lines 2--3), } p = \sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^k.
+    \text{At the start of each iteration of the for--loop (lines 2--3), } p = \sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^k.
     \]
-    We want to show that when the loop terminates, $p = \sum_{k=0}^n A[k]\cdot x^k$.
-    
-    \textbf{Initialization:} \\
-    When the loop begins, $i = n$. Then the invariant claims that:
+    (Interpret a summation with no terms as $0$.) We now prove that this invariant, together with the initialization and termination conditions, implies that at termination
     \[
-    p = \sum_{k=0}^{n-(n+1)} A[k+n+1] \cdot x^k.
+    p = \sum_{k=0}^n A[k] \cdot x^k.
     \]
-    Since the upper limit is $n-(n+1) = -1$, the summation is empty and by convention equals $0$. This matches the initialization $p \gets 0$, so the invariant holds initially.
     
-    \textbf{Maintenance:} \\
-    Suppose the invariant holds at the start of an iteration for some index $i$, so that:
+    \medskip
+    \underline{\textbf{Initialization:}}\\[1mm]
+    Before the loop begins, the algorithm sets $p \gets 0$. At this point, the loop variable is conceptually $i = n+1$ (since the loop has not started yet). Then the invariant states:
+    \[
+    p = \sum_{k=0}^{n-((n+1)+1)} A[k+(n+1)+1] \cdot x^k.
+    \]
+    Since $n-((n+1)+1)=n-(n+2)=-2$, the summation is interpreted as having no terms, so it equals $0$. Thus, the invariant holds initially.
+    
+    \medskip
+    \underline{\textbf{Maintenance:}}\\[1mm]
+    Assume that at the start of some iteration with loop index $i$ the invariant holds:
     \[
     p = \sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^k.
     \]
-    In the body of the loop, we update $p$ as follows:
+    During this iteration, line 3 updates $p$ as follows:
     \[
-    p \gets A[i] + x \cdot p.
+    p \gets A[i] + x\cdot p.
     \]
-    Substituting the invariant expression into this update gives:
+    Substitute the invariant into the right-hand side:
     \[
-    p = A[i] + x\left(\sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^k\right)
+    p \gets A[i] + x \cdot \left(\sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^k\right)
     = A[i] + \sum_{k=0}^{n-(i+1)} A[k+i+1] \cdot x^{k+1}.
     \]
-    Reindex the summation by letting $j = k + 1$. Then when $k = 0$, $j = 1$, and when $k = n-(i+1)$, $j = n-i$. This gives:
+    Re-index the summation by letting $j=k+1$. When $k=0$, $j=1$, and when $k = n-(i+1)$, $j = n-i$. Thus,
     \[
-    p = A[i] + \sum_{j=1}^{n-i} A[j+i] \cdot x^j 
-      = \sum_{j=0}^{n-i} A[j+i] \cdot x^j,
+    p = A[i] + \sum_{j=1}^{n-i} A[j+i] \cdot x^{j}.
     \]
-    where we have written $A[i]$ as the term corresponding to $j=0$. This is exactly the loop invariant for the next iteration (with $i$ replaced by $i-1$).
-    
-    \textbf{Termination:} \\
-    The loop terminates when $i = -1$. At this point, the invariant gives:
+    Notice that $A[i] = A[i] \cdot x^0$, so we can write:
     \[
-    p = \sum_{k=0}^{n-((-1)+1)} A[k+(-1)+1] \cdot x^k
-      = \sum_{k=0}^{n} A[k] \cdot x^k.
+    p = \sum_{j=0}^{n-i} A[j+i] \cdot x^{j}.
     \]
-    Hence, upon termination, $p = P(x)$.
+    This is exactly the invariant with the index updated from $i$ to $i-1$, because when the next iteration begins the loop variable is $i-1$, and the invariant becomes:
+    \[
+    p = \sum_{k=0}^{n-((i-1)+1)} A[k+(i-1)+1] \cdot x^k = \sum_{k=0}^{n-i} A[k+i] \cdot x^k.
+    \]
+    Thus, the invariant is maintained.
     
-    This completes the loop invariant proof that \textsc{Horner} correctly evaluates the polynomial.
+    \medskip
+    \underline{\textbf{Termination:}}\\[1mm]
+    The loop terminates when $i$ becomes $-1$. At that point, the invariant tells us that
+    \[
+    p = \sum_{k=0}^{n-((-1)+1)} A[k+(-1)+1] \cdot x^k.
+    \]
+    Since $-1+1 = 0$, we have:
+    \[
+    p = \sum_{k=0}^{n} A[k] \cdot x^k,
+    \]
+    which is exactly the polynomial $P(x)$.
     
+    \medskip
+    \textbf{Conclusion:} By the initialization, maintenance, and termination steps of the loop-invariant proof, we have shown that the procedure \textsc{Horner} correctly computes
+    \[
+    P(x) = \sum_{k=0}^n A[k] \cdot x^k.
+    \]
     
     %Your solution here
     
