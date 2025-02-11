@@ -1,0 +1,152 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{enumerate}
+
+\usepackage{algorithmic}
+
+\newcommand{\zo}{\{0,1\}}
+
+
+\begin{document}
+
+    \setlength{\headheight}{26pt}
+    \pagestyle{fancy}
+    \fancyhead[C]{\textbf{Basic Algorithms (Section 5)}\\Spring 2025}
+    \fancyhead[R]{HW1 (Due 2/6 23:59)\\ Instructor: Jiaxin Guan}
+    \fancyfoot[C]{}
+    \fancyfoot[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+    
+    %%%% EDIT THIS PART 
+    %Put your name and Net ID here
+	\fancyhead[L]{Name: Nick Zhu\\ Net ID: xz4687}
+    %Write your collaborators' names here
+    \fancyfoot[L]{Discussion Partners:}
+    %%%%%
+	
+    
+    %Problem 1
+    \begin{tcolorbox}[title={Problem 1 (20 pts)}]
+        Put the following functions in order in terms of $o$-notation:
+        \begin{enumerate}
+            \item $\sqrt{n}$
+            \item $2^{\log_3 n}$
+            \item $(\log n )^2$
+            \item $3^n$
+            \item $n^3$
+            \item $8^{n/2}$
+        \end{enumerate}
+        Prove that your relation is correct for each adjacent pair. In particular, if your functions are ordered as $f_1,f_2,f_3,f_4,f_5,f_6$; then show that $f_1 \in o(f_2)$ and $f_2 \in o(f_3)$ and so on.
+    \end{tcolorbox}
+    \section*{Solution}
+    \subsection*{Step 1. Ordering}
+    The functions ordered from slowest to fastest growth are as follows:
+    \[
+    (\log n)^2, \quad \sqrt{n},\quad 2^{\log_3 n},\quad n^3,\quad 8^{n/2},\quad 3^n
+    \]
+    In $o$-notation, we write
+    \[
+    (\log n)^2 \in o(\sqrt{n}) \in o(2^{\log_3 n}) \in o(n^3) \in o(8^{n/2}) \in o(3^n).
+    \]
+
+    \subsection*{Step 2. Simplification}
+    Before proving the relations, we simplify the functions to make the proofs easier.
+    Using the identity
+    \[
+    a^{\log_b n} = n^{\log_b a},
+    \]
+    we have
+    \[
+    2^{\log_3 n} = n^{\log_3 2} = n^{\frac{\log_2 2}{\log_2 3}} = n^{\frac{1}{\log_2 3}} \ approx 0.63
+    %Write your solution here!
+
+
+
+    \newpage
+    %Problem 2
+    \begin{tcolorbox}[title={Problem 2 (30 pts)}]
+    Consider the function $f(n)= n\cdot ( n \mod 2) + \log n$.
+    
+    \begin{enumerate}[(a)]
+        \item Show that $f(n) \in O(n)$ and $f(n) \in \Omega(\log n)$.
+        \item Show that neither $f(n) \in \Theta(n)$ nor $f(n) \in \Theta(\log n)$.
+        \item Suppose for some function $g(n)$, we have $f(n) \not \in O(g(n))$. Is it always true that $f(n)\in \omega(g(n))$? Justify your answer with either a proof or a counter-example.
+    \end{enumerate}
+    \end{tcolorbox}
+    %Write your solution here!
+    
+    
+
+    \newpage
+    %Problem 3
+    \begin{tcolorbox}[title={Problem 3 (20 pts)}]
+    Let $f(n)$ and $g(n)$ be non-negative functions. \begin{enumerate}[(a)]
+        \item Using the formal definition of $\Theta()$, prove that $\max(f(n),g(n))=\Theta(f(n)+g(n))$, where \[\max(a, b)=\begin{cases}
+        a &\text{if } a\geq b\\
+        b &\text{otherwise}
+    \end{cases}.\]
+        \item Can we also show that $\min(f(n),g(n))=\Theta(f(n)+g(n))$, where \[\min(a, b)=\begin{cases}
+        a &\text{if } a\leq b\\
+        b &\text{otherwise}
+    \end{cases}?\] If yes, show how the proof from part (a) needs to be adapted. If no, provide a counter-example.
+    \end{enumerate}
+    
+    \end{tcolorbox}
+    %Write your solution here!
+    
+    \newpage
+    %Problem 4
+    \begin{tcolorbox}[title={Problem 4 (30 pts)}]
+        You are given the coefficients $\alpha_0,\alpha_1,\ldots,\alpha_n$ of a polynomial
+        \begin{align*}
+            P(x) &= \sum_{k=0}^n \alpha_k x^k\\
+            &= \alpha_0+\alpha_1x+\alpha_2x^2+\cdots+\alpha_nx^n,
+        \end{align*}
+        and you want to evaluate this polynomial for a given value of $x$. \emph{Horner's rule} says to evaluate the polynomial according to this parenthesization:
+        \[
+            P(x) = \alpha_0 + x \bigg(\alpha_1+x\Big(\alpha_2 +\cdots + x\left(\alpha_{n-1}+x\alpha_n\right)\cdots\Big)\bigg).
+        \]
+        
+        The procedure \textsc{Horner} implements Horner's rule to evaluate $P(x)$, give the coefficients $\alpha_0,\alpha_1,\ldots,\alpha_n$ in an array $A[0:n]$ and the value of $x$.
+        \bigskip
+        
+        \par\noindent\rule{\textwidth}{0.4pt}
+        \smallskip        
+        \textsc{Horner}$(A,n,x)$
+        \begin{algorithmic}[1]
+            \STATE $p\gets 0$
+            \FOR{$i=n$ to $0$}
+                \STATE $p \gets A[i]+x\cdot p$
+            \ENDFOR
+            \RETURN $p$
+        \end{algorithmic}
+        \vspace{-2mm}
+        \par\noindent\rule{\textwidth}{0.4pt}
+        
+        {\it For this problem, assume that addition and multiplication can be done in constant time.}
+        \begin{enumerate}[(a)]
+            \item In terms of $\Theta$-notation, what is the running time of this procedure?
+            \item Write pseudocode to implement the naive polynomial-evaluation algorithm that computes each term of the polynomial from scratch. What is the running time of this algorithm? How does it compare to \textsc{Horner}?
+            \item Consider the following loop invariant for the prcedure \textsc{Horner}:\newline
+            At the start of each iteration of the {\bf for} loop of lines 2-3,
+            \[
+            p = \sum_{k=0}^{n-(i+1)} A[k+i+1]\cdot x^k.
+            \]
+            Interpret a summation with no terms as equaling 0. Following the structure of the loop-invariant proof presented in class, use this loop invariant to show that, at termination, $p = \sum_{k=0}^n A[k] \cdot x^k$.
+        \end{enumerate}
+        
+    \end{tcolorbox}
+    
+    
+    %Your solution here
+    
+    %Comment out the next line if editing for your solutions
+    \newpage \ 
+    
+    
+    
+\end{document}

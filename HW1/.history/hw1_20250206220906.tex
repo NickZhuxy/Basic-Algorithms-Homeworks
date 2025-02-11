@@ -25,7 +25,7 @@
     %Put your name and Net ID here
 	\fancyhead[L]{Name: Nick Zhu\\ Net ID: xz4687}
     %Write your collaborators' names here
-    \fancyfoot[L]{Discussion Partners: Jueying Zhu, Siqi Zhu}
+    \fancyfoot[L]{Discussion Partners:}
     %%%%%
 	
     
@@ -375,11 +375,7 @@
     We want to show that when the loop terminates, $p = \sum_{k=0}^n A[k]\cdot x^k$.
     
     \textbf{Initialization:} \\
-    When the loop begins, $i = n$. Then the invariant claims that:
-    \[
-    p = \sum_{k=0}^{n-(n+1)} A[k+n+1] \cdot x^k.
-    \]
-    Since the upper limit is $n-(n+1) = -1$, the summation is empty and by convention equals $0$. This matches the initialization $p \gets 0$, so the invariant holds initially.
+    When the loop begins, the summation is empty and by convention equals $0$. This matches the initialization $p \gets 0$, so the invariant holds initially.
     
     \textbf{Maintenance:} \\
     Suppose the invariant holds at the start of an iteration for some index $i$, so that:
