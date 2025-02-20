@@ -42,15 +42,21 @@
         We will use induction to show that \( T(n)=O((\log n)^2) \).
 
         \textbf{Base Case:}  
-        When $n = 2$, for any $c \geq 2$ ,we have
+        Base Case: When $n = 2$, we need to find a constant $c$ to make the
+
+        \[
+        T\left(\left\lfloor \frac{2}{2} \right\rfloor - 1\right) + \log 2 \leq c \cdot \log^2(2)
+        \]
 
         \[
         1 + \log 2 \leq c \cdot \log^2(2)
         \]
+
         \[
         2 \leq c \cdot 1
         \]
 
+        The inequality is always true when $c \geq 2$.
         \textbf{Inductive Hypothesis:}  
         Assume that for all \( k < n \) there exists a constant \( C > \frac{1}{2} \) such that:
         \[

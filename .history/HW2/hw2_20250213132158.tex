@@ -1,0 +1,146 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{enumerate}
+
+\usepackage{algorithmic}
+
+\newcommand{\zo}{\{0,1\}}
+
+
+\begin{document}
+
+    \setlength{\headheight}{26pt}
+    \pagestyle{fancy}
+    \fancyhead[C]{\textbf{Basic Algorithms (Section 5)}\\Spring 2025}
+    \fancyhead[R]{HW2 (Due 2/13 23:59)\\ Instructor: Jiaxin Guan}
+    \fancyfoot[C]{}
+    \fancyfoot[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4 pt}
+    
+    %%%% EDIT THIS PART 
+    %Put your name and Net ID here
+	\fancyhead[L]{Name: Nick Zhu  \\ Net ID: xz4687}
+    %Write your collaborators' names here
+    \fancyfoot[L]{Discussion Partners:}
+    %%%%%
+	
+    
+    %Problem 1A
+    \begin{tcolorbox}[title={Problem 1A (Recurrence Relations — 3 Styles, 9 pts)}]
+        Use induction to show the asymptotic run-time corresponding to the following recurrence relation is $O(\log^2(n))$. \textbf{Do not use the Master Theorem here.}
+        \begin{center}
+            $T(0) = T(1) = 1$. For all $n\geq 2$, $T(n) = T(\lceil\frac{n}{2}\rceil-1) + \log n$.
+        \end{center}
+    \end{tcolorbox}
+    %Write your solution here!
+    \section*{Solution}
+    
+        \textbf{Base Case:} For \( n=0 \) and \( n=1 \), we have \( T(0)=T(1)=1 \). 
+        By choosing \( C \) sufficiently large or by considering the claim only for \( n\ge2 \), the base case holds.
+
+        \textbf{Inductive Hypothesis:} Assume that for all \( k < n \) (with \( n \) sufficiently large) 
+        there exists a constant \( C > \frac{1}{2} \) such that:
+        \[
+        T(k) \le C (\log k)^2.
+        \]
+        
+        \textbf{Inductive Step:} Consider \( n \ge 2 \). Then:
+        \[
+        T(n) = T\Big(\Big\lceil\frac{n}{2}\Big\rceil-1\Big) + \log n.
+        \]
+        Note that:
+        \[
+        \Big\lceil\frac{n}{2}\Big\rceil - 1 \le \frac{n}{2}.
+        \]
+        Thus, by the inductive hypothesis,
+        \[
+        T(n) \le C \left(\log \frac{n}{2}\right)^2 + \log n.
+        \]
+        Since \( \log \frac{n}{2} = \log n - 1 \), we have:
+        \[
+        T(n) \le C (\log n - 1)^2 + \log n.
+        \]
+        Expanding the square yields:
+        \[
+        T(n) \le C\left[(\log n)^2 - 2\log n + 1\right] + \log n = C (\log n)^2 - 2C \log n + C + \log n.
+        \]
+        This can be rewritten as:
+        \[
+        T(n) \le C (\log n)^2 - (2C - 1)\log n + C.
+        \]
+        To ensure that \( T(n) \le C (\log n)^2 \), it suffices that:
+        \[
+        -(2C - 1)\log n + C \le 0.
+        \]
+        This inequality holds for all sufficiently large \( n \) provided that:
+        \[
+        2C - 1 > 0 \quad \Longleftrightarrow \quad C > \frac{1}{2}.
+        \]
+        Hence, by choosing any constant \( C > \frac{1}{2} \), the inductive step is verified.
+
+        \textbf{Conclusion:}  
+        By mathematical induction, for all sufficiently large \( n \),
+        \[
+        T(n) \le C (\log n)^2.
+        \]
+        Thus, \( T(n)=O((\log n)^2) \).
+        
+        \hfill\(\Box\)
+    \newpage
+    
+    %Problem 1B
+    \begin{tcolorbox}[title={Problem 1B (9 pts)}]
+        Use a recursion tree to find the asymptotic run-time corresponding to the following recurrence relation. You may assume any fractional input to $T$ is the greatest integer less than it (e.g., $T(\frac{2n}{3}) = T(\lfloor\frac{2n}{3}\rfloor)$).
+        \begin{center}
+            $T(0) = T(1) = 1$. For all $n\geq 2$, $T(n) = T(\frac{2n}{3}) + T(\frac{n}{5}) + n$
+        \end{center}
+    \end{tcolorbox}
+    %Write your solution here!
+    
+    
+    
+    \newpage
+    
+    %Problem 1C
+    \begin{tcolorbox}[title={Problem 1C (12 pts)}]
+        Find the asymptotic run-time corresponding to each of the following recurrence relations using the Master Theorem. For each, explain which case of the Master Theorem applies and why.
+        \begin{enumerate}[(a)]
+            \item $T(n) = 2T(\frac{n}{5}) + \sqrt{2n}$.
+            \item $T(n) = 3T(\frac{n}{3}) + n/2$.
+            \item $T(n) = 4T(\frac{n}{2}) + n\log n$.
+        \end{enumerate}
+    \end{tcolorbox}
+    %Write your solution here!
+
+    \newpage
+    
+    %Problem 2
+    \begin{tcolorbox}[title={Problem 2 (Array Search, 30 pts)}]
+        You are given an array of $n$ integers $a_1 < a_2 < \dots < a_n$. Give an $O(\log n)$ algorithm that outputs an index $i$ where $a_i = i$, or outputs $\bot$ if such $i$ does not exist. Justify the correctness and time complexity of your proposed algorithm.
+    \end{tcolorbox}
+    %Write your solution here!
+    
+    \newpage
+    
+    %Problem 3
+    \begin{tcolorbox}[title={Problem 3 (Malfunctioning Phones, 40 pts)}]
+        A manufacturer has a recall on a set of $n$ cell phones, some of which have a malfunction which makes them unreliable. The manufacturer has built a machine that allows a pair of phones to test each other's correctness. Let $C_1, C_2$ be a pair of phones. The machine $M$ runs in the following way:
+        \begin{enumerate}
+            \item $M(C_1, C_2) = 11$ if both phones say the other is working.
+            \item $M(C_1, C_2) = 10$ if one phone says the other is working and one phone says the other is malfunctioning. 
+            \item $M(C_1, C_2) = 00$ if both phones say the other is malfunctioning. 
+        \end{enumerate}
+        Remember that malfunctioning phones cannot be trusted, so they may lie, tell the truth, or throw out a random response. Working phones, on the other hand, can be assumed to know if the other phone is working or malfunctioning always. 
+        \begin{enumerate}[(a)]
+            \item Show that if you know at least one working phone, all other working phones can be found by using $O(n)$ queries to $M$.
+            \item Assume the majority of the phones are working, i.e., there are greater than $n/2$ working phones. Give an algorithm that can find a working phone in $O(n)$ queries to $M$. Justify the correctness and time complexity of your proposed algorithm. [Hint: Start by explaining how to use $O(n)$ queries to reduce the problem size by a constant factor.]
+            \item Assume the majority of the phones are malfunctioning, i.e., there are fewer than $n/2$ working phones. Is there still a procedure (using $M$) that is guaranteed to find a working phone? Give a brief justification.
+        \end{enumerate}
+    \end{tcolorbox}
+    %Write your solution here!
+    
+\end{document}

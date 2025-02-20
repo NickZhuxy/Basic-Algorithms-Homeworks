@@ -1,4 +1,4 @@
- \documentclass[11pt]{article}
+\documentclass[11pt]{article}
 \usepackage{amsmath, amssymb, amsfonts, amsthm}
 \usepackage[margin=1in]{geometry}
 \usepackage{fancyhdr}
@@ -25,7 +25,7 @@
     %Put your name and Net ID here
 	\fancyhead[L]{Name: Nick Zhu  \\ Net ID: xz4687}
     %Write your collaborators' names here
-    \fancyfoot[L]{Discussion Partners:Jueying Zhu, Siqi Zhu, Xichun Fan}
+    \fancyfoot[L]{Discussion Partners:}
     %%%%%
 	
     
@@ -42,14 +42,12 @@
         We will use induction to show that \( T(n)=O((\log n)^2) \).
 
         \textbf{Base Case:}  
-        When $n = 2$, for any $c \geq 2$ ,we have
-
+        For \( n = 0 \) and \( n = 1 \), we have:
         \[
-        1 + \log 2 \leq c \cdot \log^2(2)
+        T(0)=T(1)=1.
         \]
-        \[
-        2 \leq c \cdot 1
-        \]
+        This satisfies the bound \( T(n) \le C (\log n)^2 \) for any constant \( C \) 
+        (for these small values, the statement is vacuously true or we choose \( C \) large enough to cover these cases).
 
         \textbf{Inductive Hypothesis:}  
         Assume that for all \( k < n \) there exists a constant \( C > \frac{1}{2} \) such that:
@@ -303,7 +301,7 @@
 
     \textbf{(a) }
     
-    Suppose we know  phone \(W\) is working. Since working phones always report correctly, we can determine whether any other phone \(X\) is working by querying the machine \(M(W,X)\). In particular, when \(W\) tests \(X\):
+    Suppose we know a particular phone \(W\) is working. Since working phones always report correctly, we can determine whether any other phone \(X\) is working by querying the machine \(M(W,X)\). In particular, when \(W\) tests \(X\):
     \begin{itemize}
         \item If \(W\) reports that \(X\) is working (i.e. the output is either \(11\) or, in a mixed response, the trusted answer from \(W\) is that \(X\) is working), then \(X\) must be working.
         \item If \(W\) reports that \(X\) is malfunctioning, then \(X\) is malfunctioning.
@@ -314,64 +312,49 @@
     
     \textbf{(b) }
     
-    Assume that more than $\frac{n}{2}$ phones are working. We now describe an algorithm that finds a working phone using $O(n)$ queries to the machine $M$:
-    \subsection*{Algorithm}
+    \textbf{Algorithm Outline:}  
+    Since more than half of the \(n\) phones are working, we can use a pairwise elimination process to reduce the problem size while preserving at least one working phone.
+    
+    \medskip
+    
+    \textsc{FindCandidate}(\(S\)):
     \begin{enumerate}
-        \item \textbf{Pairing:} Partition the $n$ phones arbitrarily into pairs. If $n$ is odd, leave one phone unpaired.
-        \item \textbf{Testing:} For each pair $(A,B)$, perform a query $M(A,B)$.
+        \item \textbf{Pairing:} Partition the current set \(S\) (initially, all \(n\) phones) arbitrarily into pairs. If there is an odd one out, let it pass to the next round unpaired.
+        \item \textbf{Testing:} For each pair \((C_i, C_j)\), run the query \(M(C_i,C_j)\).  
         \begin{itemize}
-            \item If $M(A,B) = 11$, then \emph{at least one} of $A$ or $B$ is working. Retain \emph{one} of these (say, $A$) as a candidate.
-            \item If $M(A,B) = 10$ or $00$, discard both $A$ and $B$.
+            \item If the machine returns \(11\) (both phones claim the other is working), then \emph{at least one} of them is working. (In fact, if both are working, the response is \(11\); if one is malfunctioning, the working phone will still correctly report the other as malfunctioning—but then the response would not be \(11\). Thus, a response of \(11\) strongly suggests that both are working. However, even if a pair of malfunctioning phones might collude to output \(11\), they are in the minority.)
+            \item Otherwise (i.e. if the result is \(10\) or \(00\)), discard both phones.
         \end{itemize}
-        \item \textbf{Iteration:} Replace the current set of phones with the set of retained candidates and repeat the pairing and testing process until a single candidate remains. Declare this candidate as working.
+        \item \textbf{Recursion:} Let \(S'\) be the set of phones retained from all pairs. Since more than half of the phones are working, the majority property ensures that at least one working phone remains in \(S'\). Repeat the process on \(S'\) until only one candidate \(C^*\) remains.
     \end{enumerate}
     
-    \subsection*{Correctness and Detailed Justification}
+    \textbf{Verification:}  
+    Once a candidate \(C^*\) is obtained, use the procedure from part (a): Test \(C^*\) against every phone (or a known working phone, if already identified) to verify that \(C^*\) is working. This requires an additional \(O(n)\) queries.
     
-    \paragraph{Majority Preservation}
-    Let $W$ and $L$ denote the number of working and malfunctioning phones, respectively. Initially, we have
-    \[
-    W > L.
-    \]
-    In each round of pairing, consider two types of pairs:
+    \medskip
+    
+    \textbf{Correctness:}  
+    We maintain the invariant that if there is a working phone in the current set \(S\), then after pairing and elimination at least one working phone remains in \(S'\). This is because:
     \begin{itemize}
-        \item \textbf{Pairs with outcome $10$ or $00$:}  
-        In a pair with one working and one malfunctioning phone, the working phone correctly identifies the malfunctioning one, resulting in an outcome $10$ (or $00$ if the malfunctioning phone lies). In this case, both phones are discarded. Thus, one working phone and one malfunctioning phone are eliminated.
-        
-        In a pair of two malfunctioning phones, both are eliminated.
-        
-        Let $C$ be the total number of working phones eliminated and $D$ the total number of malfunctioning phones eliminated in this round. In all such pairs, it holds that 
-        \[
-        C \leq D.
-        \]
-        Applying the hint (if $A>B$ and $C\leq B$, then $A-C > B-D$) with $A=W$ and $B=L$, we deduce that 
-        \[
-        W - C > L - D.
-        \]
-        That is, the remaining candidate set still has a strict majority of working phones.
-        
-        \item \textbf{Pairs with outcome $11$:}  
-        In a pair that produces $M(A,B)=11$, at least one phone is working. We retain one candidate from such a pair. Note that it is possible that the pair consists of two malfunctioning phones that collude to output $11$. However, even if this happens, the effect is simply that one malfunctioning phone is carried forward into the candidate set.
+        \item A pair of working phones always produces the outcome \(11\) when tested (since both are reliable).
+        \item In a pair containing one working and one malfunctioning phone, the working phone will correctly report the malfunctioning one as faulty, so the outcome will not be \(11\), leading to discarding both. However, since working phones form a strict majority, such losses are limited.
     \end{itemize}
+    Thus, the candidate \(C^*\) produced by the elimination process is guaranteed to be working. 
     
-    \paragraph{Why Pairs of Two Malfunctioning Phones (Yielding $11$) Do Not Disrupt the Process.}
-    Even when two malfunctioning phones are paired and collude to produce $M(A,B)=11$, the algorithm retains one candidate from the pair. Although this candidate is malfunctioning, the overall elimination process in the rounds where outcomes $10$ or $00$ occur guarantees that the number of working phones eliminated is never more than the number of malfunctioning ones eliminated. By the professor's hint, subtracting a smaller (or equal) number from the initial majority ($W > L$) leaves us with a positive difference:
-    \[
-    W - C > L - D.
-    \]
-    Thus, even if some pairs of malfunctioning phones sneak into the candidate set by yielding $11$, the net majority of working phones is preserved across rounds. When the process finally reduces the candidate set to a single phone, the preserved majority guarantees that this candidate is working.
+    \medskip
     
-    \subsection*{Time Complexity}
-    In the first round, we make at most $\lfloor n/2 \rfloor$ queries. In each subsequent round, the number of candidates is reduced by a constant factor. The total number of queries is bounded by:
-    \[
-    \frac{n}{2} + \frac{n}{4} + \frac{n}{8} + \cdots \leq n,
-    \]
-    which is $O(n)$.
+    \textbf{Time Complexity:}  
+    Each pairing round makes \(O(n)\) queries and reduces the set size by at least a constant factor (roughly half). Since there are \(O(1)\) rounds (in fact, \(O(\log n)\) rounds, but the constant factors add up to \(O(n)\) overall), and the final verification step takes \(O(n)\) queries, the total number of queries is \(O(n)\).
     
     \bigskip
-
+    
     \textbf{(c) }
-
+    
     When fewer than \(n/2\) phones are working, the working phones are in the minority. In this case, no procedure using the machine \(M\) is guaranteed to find a working phone. The reason is that malfunctioning phones can provide arbitrary, even adversarial, responses. They may collude to mimic the responses of working phones (e.g., always outputting \(11\)) and thus hide the existence of any working phone. Without a reliable majority, any elimination strategy can be subverted by the faulty phones’ unpredictable behavior.
+    
+    \bigskip
+    
+    \par\noindent\rule{\textwidth}{0.4pt}
+    
     
 \end{document}

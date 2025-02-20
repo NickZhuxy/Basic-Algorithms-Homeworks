@@ -42,14 +42,12 @@
         We will use induction to show that \( T(n)=O((\log n)^2) \).
 
         \textbf{Base Case:}  
-        When $n = 2$, for any $c \geq 2$ ,we have
-
+        For \( n = 0 \) and \( n = 1 \), we have:
         \[
-        1 + \log 2 \leq c \cdot \log^2(2)
+        T(0)=T(1)=1.
         \]
-        \[
-        2 \leq c \cdot 1
-        \]
+        This satisfies the bound \( T(n) \le C (\log n)^2 \) for any constant \( C \) 
+        (for these small values, the statement is vacuously true or we choose \( C \) large enough to cover these cases).
 
         \textbf{Inductive Hypothesis:}  
         Assume that for all \( k < n \) there exists a constant \( C > \frac{1}{2} \) such that:
@@ -313,8 +311,12 @@
     \bigskip
     
     \textbf{(b) }
+    Assume that more than $\frac{n}{2}$ phones are working. We now describe an algorithm that finds a working phone using $O(n)$ queries to the machine $M$, and we incorporate two key points:
+    \begin{enumerate}
+        \item Even if two malfunctioning phones are paired and produce $M(A,B)=11$, this does not disrupt the overall algorithm.
+        \item We use the hint given in class: if you have $A > B$ and $C \leq B$, then $A - C > B - D$, to show that the majority of working phones is preserved through the elimination process.
+    \end{enumerate}
     
-    Assume that more than $\frac{n}{2}$ phones are working. We now describe an algorithm that finds a working phone using $O(n)$ queries to the machine $M$:
     \subsection*{Algorithm}
     \begin{enumerate}
         \item \textbf{Pairing:} Partition the $n$ phones arbitrarily into pairs. If $n$ is odd, leave one phone unpaired.
@@ -328,7 +330,7 @@
     
     \subsection*{Correctness and Detailed Justification}
     
-    \paragraph{Majority Preservation}
+    \paragraph{Majority Preservation via the Professor's Hint.}
     Let $W$ and $L$ denote the number of working and malfunctioning phones, respectively. Initially, we have
     \[
     W > L.
@@ -344,7 +346,7 @@
         \[
         C \leq D.
         \]
-        Applying the hint (if $A>B$ and $C\leq B$, then $A-C > B-D$) with $A=W$ and $B=L$, we deduce that 
+        Applying the hint (if $A>B$ and $C\leq B$, then $A-C > B-D$) with $A=W$ and $B=L$, we deduce that after elimination, the difference 
         \[
         W - C > L - D.
         \]
