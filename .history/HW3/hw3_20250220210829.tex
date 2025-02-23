@@ -100,30 +100,19 @@
     \end{tcolorbox}
     %Write your solution here!
     \section*{Solution}
-    We can view the two databases as two sorted arrays \( A \) and \( B \) of length \( n \) each.  
-    The median of the \( 2n \) entries is the \( n \)-th smallest element overall.  
-    We use a divide-and-conquer strategy to find the \( k \)-th smallest element in the union of two sorted arrays. 
-    At each step, we compare the elements at appropriately chosen positions in \( A \) and \( B \) and discard a portion of one array that cannot contain the \( k \)-th smallest element. 
-    This recursion decreases the effective search size by roughly a factor of 2 per iteration, leading to \( O(\log n) \) queries.
-    
-    Since we can only access each database by querying for a specific order statistic, we simulate array access by issuing queries such as \(\text{Query}(A, k)\) to get the \( k \)-th smallest element in \( A \).
-    
-    \bigskip
-    
-    \textbf{Algorithm Details:} \\
-    We first define a recursive subroutine \textsc{KthSmallest} that, given current index bounds in \( A \) and \( B \) and a number \( k \), returns the \( k \)-th smallest element in the union of the subarrays. The base cases handle when one database is exhausted or when \( k = 1 \). In the recursive step, let
-    \[
-    i = \min(\text{number of remaining elements in } A, \lfloor k/2 \rfloor)
-    \]
-    and
-    \[
-    j = \min(\text{number of remaining elements in } B, \lfloor k/2 \rfloor).
-    \]
-    We query for \( a = \text{Query}(A, L_A+i-1) \) and \( b = \text{Query}(B, L_B+j-1) \) (where \( L_A \) and \( L_B \) are the current lower indices for \( A \) and \( B \) respectively). If \( a < b \), then the first \( i \) elements of \( A \) can be discarded; otherwise, discard the first \( j \) elements of \( B \). Recursively adjust \( k \) accordingly.
+    We view the two databases as two sorted arrays \( A \) and \( B \) of length \( n \) each. The median is the \( n \)-th smallest element in the union \( A \cup B \). Using a divide-and-conquer strategy, we define a recursive subroutine \textsc{KthSmallest} that finds the \( k \)-th smallest element in the union. At each recursive step, we:
+    \begin{itemize}
+        \item Set \( i = \min\{ \lfloor k/2 \rfloor, \text{number of remaining elements in } A \} \) and similarly\\
+         \( j = \min\{ \lfloor k/2 \rfloor, \text{number of remaining elements in } B \} \).
+        \item Query the databases to obtain \( a = \text{Query}(A, L_A + i - 1) \) and \( b = \text{Query}(B, L_B + j - 1) \).
+        \item Compare \( a \) and \( b \): if \( a < b \), then the first \( i \) elements in \( A \) cannot contain the \( k \)-th smallest element, so we discard them and reduce \( k \) by \( i \); otherwise, we discard the first \( j \) elements in \( B \) and reduce \( k \) by \( j \).
+    \end{itemize}
+    By discarding at least \(\lfloor k/2 \rfloor\) elements in each recursive call, the recursion depth is \( O(\log n) \), ensuring that the total number of queries is \( O(\log n) \).
     
     \bigskip
     
-    \textbf{Pseudocode:}
+    \textbf{Pseudocode:} \\
+    Note: The query operation, which returns the \( k \)-th smallest number in a database, is assumed to be provided.
     
     \par\noindent\rule{\textwidth}{0.4pt}
     \smallskip        
@@ -150,7 +139,7 @@
             \RETURN \(\text{Query}(A, L_A + k - 1)\)
         \ENDIF
         \IF{\( k = 1 \)}
-            \RETURN \(\min(\text{Query}(A, L_A), \text{Query}(B, L_B))\)
+            \RETURN \(\min\{\text{Query}(A, L_A),\, \text{Query}(B, L_B)\}\)
         \ENDIF
         \STATE \( i \gets \min(R_A - L_A + 1, \lfloor k/2 \rfloor) \)
         \STATE \( j \gets \min(R_B - L_B + 1, \lfloor k/2 \rfloor) \)
@@ -168,9 +157,9 @@
     \bigskip
     
     \textbf{Correctness and Time Complexity:} \\
-    At every recursive call, the algorithm maintains the invariant that the \( k \)-th smallest element in the union of the remaining portions of \( A \) and \( B \) is preserved. By comparing \(\text{Query}(A, L_A+i-1)\) and \(\text{Query}(B, L_B+j-1)\), we can safely discard \( i \) or \( j \) elements from one database, ensuring that the new problem size reduces \( k \) by at least \(\lfloor k/2 \rfloor\). Therefore, the depth of the recursion is \( O(\log n) \), and each recursive call makes only \( O(1) \) queries. Consequently, the overall algorithm uses \( O(\log n) \) queries.
+    The correctness follows by induction on \( k \). At every step, the algorithm maintains that the \( k \)-th smallest element in the union of the remaining elements of \( A \) and \( B \) is preserved. By discarding at least \(\lfloor k/2 \rfloor\) elements in each call, the recursion depth is \( O(\log n) \). Since each recursive call issues only a constant number of queries, the overall query complexity is \( O(\log n) \).
     
-
+        
     \newpage
 
     %Problem 3
@@ -206,63 +195,6 @@
              
     \end{tcolorbox}
     %Write your solution here!
-    \section*{Solution}
-    We solve the problem by designing a divide-and-conquer algorithm. The idea is to use recursion to break the \( 2^n \times 2^n \) grid into four quadrants, place one L-shaped tile at the center to “simulate” a defect in the three quadrants that do not initially contain the black square, and then recursively tile each quadrant.
     
-    \bigskip
-    
-    \textbf{Algorithm Description:} \\
-    \begin{enumerate}
-        \item \textbf{Base Case:} When \( n = 1 \), the grid is \( 2 \times 2 \). Since one square is black, the remaining three squares form an L-shape, which can be covered by a single L-shaped tile.
-        \item \textbf{Recursive Step:} For \( n \ge 2 \):
-        \begin{enumerate}
-            \item Divide the \( 2^n \times 2^n \) grid into four quadrants, each of size \( 2^{n-1} \times 2^{n-1} \).
-            \item Identify the quadrant that contains the given black square (the defect).
-            \item Place one L-shaped tile at the center of the grid so that it covers the central unit square of the three quadrants that do \emph{not} contain the black square. This placement introduces a new defect in each of those three quadrants.
-            \item Recursively tile each quadrant:
-                \begin{itemize}
-                    \item In the quadrant that originally contained the black square, use that black square.
-                    \item In the other three quadrants, use the square covered by the central L-tile (the newly created defect) as the black square.
-                \end{itemize}
-        \end{enumerate}
-    \end{enumerate}
-    
-    \bigskip
-    
-    \textbf{Pseudocode:}
-    
-    \par\noindent\rule{\textwidth}{0.4pt}
-    \smallskip        
-    \textsc{TileDefectiveBoard}$(n, i, j, r, c)$ \\
-    \textbf{Input:} \( n \) (the grid size is \( 2^n \times 2^n \)); \((i,j)\) is the position of the black square within the grid whose bottom-left corner is at \((r,c)\). \\
-    \textbf{Output:} A tiling of the grid using L-shaped tiles.
-    \begin{algorithmic}[1]
-        \IF{\( n = 1 \)}
-            \STATE \textbf{Place an L-tile} covering the three white squares in the \(2\times2\) grid.
-            \RETURN
-        \ENDIF
-        \STATE Let \( m \gets 2^{n-1} \)  \COMMENT{This is the midpoint that partitions the grid}
-        \STATE Determine the quadrant \( Q \) that contains the defective (black) square:
-        \begin{itemize}
-            \item \textbf{Quadrant 1 (bottom-left):} if \( i \le m \) and \( j \le m \).
-            \item \textbf{Quadrant 2 (bottom-right):} if \( i \le m \) and \( j > m \).
-            \item \textbf{Quadrant 3 (top-left):} if \( i > m \) and \( j \le m \).
-            \item \textbf{Quadrant 4 (top-right):} if \( i > m \) and \( j > m \).
-        \end{itemize}
-        \STATE \textbf{Place one L-tile} at the center of the grid covering the central squares of the three quadrants that do not contain the original black square.
-        \STATE For each quadrant \( k = 1,2,3,4 \):
-        \begin{itemize}
-            \item Let \((r_k, c_k)\) denote the bottom-left corner of quadrant \( k \).
-            \item Let \((i_k, j_k)\) be the position of the defective square in quadrant \( k \):
-            \begin{itemize}
-                \item If quadrant \( k \) contains the original defective square, then \((i_k, j_k) = (i, j)\) (translated relative to the quadrant’s coordinates).
-                \item Otherwise, \((i_k, j_k)\) is the position of the square covered by the central L-tile in quadrant \( k \).
-            \end{itemize}
-            \item \textbf{Recursively call} \textsc{TileDefectiveBoard}\((n-1, i_k, j_k, r_k, c_k)\).
-        \end{itemize}
-        \RETURN
-    \end{algorithmic}
-    \vspace{-2mm}
-    \par\noindent\rule{\textwidth}{0.4pt}
     
 \end{document}

@@ -207,7 +207,14 @@
     \end{tcolorbox}
     %Write your solution here!
     \section*{Solution}
-    We solve the problem by designing a divide-and-conquer algorithm. The idea is to use recursion to break the \( 2^n \times 2^n \) grid into four quadrants, place one L-shaped tile at the center to “simulate” a defect in the three quadrants that do not initially contain the black square, and then recursively tile each quadrant.
+
+    \textbf{Problem Statement:} \\
+    For a positive integer \( n \), consider a \( 2^n \times 2^n \) grid, where one unit square is colored black and all others are white. Prove that regardless of the position of the black square, the white area can be completely tiled (without overlap) using L-shaped tiles (trominoes) that cover exactly 3 unit squares (rotations allowed).
+    
+    \bigskip
+    
+    \textbf{Overview of the Approach:} \\
+    We solve the problem by designing a divide-and-conquer algorithm. The idea is to use recursion to break the \( 2^n \times 2^n \) grid into four quadrants, place one L-shaped tile at the center to “simulate” a defect in the three quadrants that do not initially contain the black square, and then recursively tile each quadrant. This strategy, often known as the \emph{tromino tiling} method, works by induction on \( n \).
     
     \bigskip
     
@@ -264,5 +271,41 @@
     \end{algorithmic}
     \vspace{-2mm}
     \par\noindent\rule{\textwidth}{0.4pt}
+    
+    \bigskip
+    
+    \textbf{Detailed Explanation of Each Step:}
+    
+    \begin{enumerate}
+        \item \textbf{Base Case (\( n = 1 \)):} \\
+        When \( n = 1 \), the grid is a \( 2 \times 2 \) square. With one square already black, the three remaining white squares naturally form an L-shape. Thus, placing one L-tile exactly covers these three white squares.
+        
+        \item \textbf{Dividing the Grid:} \\
+        For \( n \ge 2 \), the grid has size \( 2^n \times 2^n \). We partition the grid into four quadrants by drawing a vertical and a horizontal line through the midpoint. Each quadrant is of size \( 2^{n-1} \times 2^{n-1} \) and can be treated as an independent subproblem.
+        
+        \item \textbf{Identifying the Defective Quadrant:} \\
+        The given black square (defect) lies in one of these four quadrants. It is crucial to identify this quadrant because it already has a defect. The other three quadrants do not have a defect, so we artificially create one in each by placing an L-tile at the center.
+        
+        \item \textbf{Placing the Central L-tile:} \\
+        At the center of the grid, the four quadrants meet. We place one L-tile so that it covers one square in each of the three quadrants that do not contain the original defect. By doing this, each of these three quadrants now has one square covered (acting as a defect), which allows us to apply the inductive hypothesis.
+        
+        \item \textbf{Recursive Tiling of Each Quadrant:} \\
+        Now, each quadrant is a \( 2^{n-1} \times 2^{n-1} \) grid with one defect:
+        \begin{itemize}
+            \item The quadrant originally containing the black square already has the defect.
+            \item The other three quadrants have a new defect created by the central L-tile.
+        \end{itemize}
+        We then recursively apply the tiling algorithm to each quadrant. The recursion continues until the grid size reduces to \( 2 \times 2 \) (the base case).
+        
+        \item \textbf{Combining the Solutions:} \\
+        As each quadrant is tiled recursively, the placement of the central L-tile ensures that the tilings of the four quadrants fit together perfectly. No overlaps occur, and every white square is covered by exactly one L-tile.
+    \end{enumerate}
+    
+    \bigskip
+    
+    \textbf{Conclusion:} \\
+    By induction on \( n \) and using this divide-and-conquer construction, we have shown that for any \( 2^n \times 2^n \) grid with one black square, the remaining white squares can be completely tiled with L-shaped tiles. This construction works regardless of the initial position of the black square, thereby proving the claim.
+    
+    
     
 \end{document}
