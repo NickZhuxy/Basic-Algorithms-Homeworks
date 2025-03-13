@@ -285,9 +285,7 @@
             \item If the two elements have opposite marks (one is a candidate for the maximum and the other for the minimum), then regardless of the answer, one of the elements will obtain the missing mark and will move into \( b \) (i.e., be eliminated). In this case, the adversary accepts that one elimination (an increase in \( b \)) is unavoidable.
         \end{itemize}
     \end{enumerate}
-    Note that it is not necessary to consider cases where one or both elements are already in \(b\) because once an element is in \(b\), it has already been eliminated as a candidate for either the minimum or maximum. 
-    The only comparisons that affect progress toward isolating the two extreme elements are those that move an element from \(a\) to \(c\) or from \(c\) to \(b\). 
-    Comparisons involving an element in \(b\) do not contribute any further to eliminating candidates, and thus they do not affect the overall lower bound calculation.
+    It is not necessary to consider cases where one or both elements are already in \(B\) because once an element is in \(B\), it has already been eliminated as a candidate for either the minimum or maximum. In our analysis, the only comparisons that affect progress toward isolating the two extreme elements are those that move an element from \(A\) (untouched) to \(C\) (half-decided) or from \(C\) to \(B\) (eliminated). Comparisons involving an element in \(B\) do not contribute any further to eliminating candidates, and thus they do not affect the overall lower bound calculation.
     
     Since initially all elements are in \( a \), we must first “open” them up by making about \( \frac{n}{2} \) comparisons (pairing the \( n \) elements to move them from \( a \) to \( c \)). Then, to eliminate the remaining \( n-2 \) elements (i.e., to have \( b = n-2 \) at termination), the algorithm must perform at least \( n-2 \) additional comparisons (each of which, in the worst case, eliminates at most one element). Therefore, the total number of comparisons is at least
     \[

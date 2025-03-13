@@ -176,21 +176,36 @@
     Consider the following procedure which uses at most \( n-2 \) comparisons:
     
     \begin{enumerate}
+        \item \textbf{Initial Check:} Compare the first two elements.
+        \begin{itemize}
+            \item If \( A[1] = A[2] \), output the pair \((1,2)\) and halt.
+        \end{itemize}
+        
         \item \textbf{Searching with \( A[1] \) as a Candidate:}  
-        For \( i = 2, 3, \dots, n-1 \):
+        For \( i = 3, 4, \dots, n-1 \):
         \begin{itemize}
             \item Compare \( A[1] \) with \( A[i] \).
-            \item If \( A[1] = A[i] \), output the pair \((1,i)\).
+            \item If \( A[1] = A[i] \), output the pair \((1,i)\) and halt.
         \end{itemize}
-        This loop from \( i = 2\) to \( i = n-1 \) uses \( n-2 \) comparisons.
         
         \item \textbf{Final Step:}  
         If no match is found in the previous steps, then by the problem's hypothesis (each element appears exactly twice), the duplicate of \( A[1] \) must be in position \( n \). Thus, output the pair \((1,n)\).
     \end{enumerate}
     
+    \textbf{Analysis of Comparisons:}
+    
+    \begin{itemize}
+        \item The initial check uses \( 1 \) comparison.
+        \item The loop from \( i = 3 \) to \( i = n-1 \) uses \( (n-1) - 2 = n-3 \) comparisons.
+        \item Therefore, in the worst case, the total number of comparisons is 
+        \[
+        1 + (n-3) = n-2.
+        \]
+    \end{itemize}
+    
     \subsection*{(b) Worst-Case Analysis for \( n = 10 \)}
     
-    To prove that our algorithm uses \( n-2 \) comparisons in the worst case, we provide a worst-case input where \( A[1] \) does not match any element from \( A[2] \) to \( A[9] \), forcing the algorithm to make all \( 8 \) comparisons.
+    To prove that our algorithm uses \( n-2 \) comparisons in the worst case, we provide a worst-case input where \( A[1] \) does not match any element from \( A[2] \) to \( A[9] \), forcing the algorithm to make all \( 1 + 7 = 8 \) comparisons (since \( 10-2 = 8 \)).
     
     Consider the following array:
     \[
@@ -198,11 +213,12 @@
     \]
     Here, \( A[1] = 1 \) and its duplicate appears only at \( A[10] \). The algorithm proceeds as follows:
     \begin{enumerate}
-        \item \textbf{Step 1:} Compare \( A[1] \) with \( A[2], A[3], \dots, A[9] \) (8 comparisons total) \(\rightarrow\) no match found.
-        \item \textbf{Step 2:} Since no match is found, conclude that the duplicate of \( A[1] \) is at \( A[10] \) and output the pair \((1,10)\).
+        \item \textbf{Step 1:} Compare \( A[1] = 1 \) with \( A[2] = 2 \) (1 comparison) \(\rightarrow\) not equal.
+        \item \textbf{Step 2:} Compare \( A[1] \) with \( A[3], A[4], \dots, A[9] \) (7 comparisons total) \(\rightarrow\) no match found.
+        \item \textbf{Step 3:} Since no match is found, conclude that the duplicate of \( A[1] \) is at \( A[10] \) and output the pair \((1,10)\).
     \end{enumerate}
     
-    Thus, the worst-case number of comparisons is \( 8 \) for \( n = 10 \).
+    Thus, the worst-case number of comparisons is \( 1 + 7 = 8 \) for \( n = 10 \).
     
     \newpage
     %Problem 3
@@ -285,9 +301,6 @@
             \item If the two elements have opposite marks (one is a candidate for the maximum and the other for the minimum), then regardless of the answer, one of the elements will obtain the missing mark and will move into \( b \) (i.e., be eliminated). In this case, the adversary accepts that one elimination (an increase in \( b \)) is unavoidable.
         \end{itemize}
     \end{enumerate}
-    Note that it is not necessary to consider cases where one or both elements are already in \(b\) because once an element is in \(b\), it has already been eliminated as a candidate for either the minimum or maximum. 
-    The only comparisons that affect progress toward isolating the two extreme elements are those that move an element from \(a\) to \(c\) or from \(c\) to \(b\). 
-    Comparisons involving an element in \(b\) do not contribute any further to eliminating candidates, and thus they do not affect the overall lower bound calculation.
     
     Since initially all elements are in \( a \), we must first “open” them up by making about \( \frac{n}{2} \) comparisons (pairing the \( n \) elements to move them from \( a \) to \( c \)). Then, to eliminate the remaining \( n-2 \) elements (i.e., to have \( b = n-2 \) at termination), the algorithm must perform at least \( n-2 \) additional comparisons (each of which, in the worst case, eliminates at most one element). Therefore, the total number of comparisons is at least
     \[

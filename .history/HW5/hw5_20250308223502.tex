@@ -1,0 +1,331 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\usepackage{algorithmic}
+
+\newcommand{\zo}{\{0,1\}}
+\usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning}
+\tikzset
+{
+    treenode/.style = {circle, draw=black, align=center, 
+                          minimum size=1cm, anchor=center}
+}
+
+\begin{document}
+
+    \setlength{\headheight}{26pt}
+    \pagestyle{fancy}
+    \fancyhead[C]{\textbf{Basic Algorithms (Section 5)}\\Spring 2025}
+    \fancyhead[R]{HW5 (Due 3/6 23:59)\\ Instructor: Jiaxin Guan}
+    \fancyfoot[C]{}
+    \fancyfoot[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+    
+    %%%% EDIT THIS PART 
+    %Put your name and Net ID here
+	\fancyhead[L]{Name: Nick Zhu \\ Net ID: xz4687}
+    %Write your collaborators' names here
+    \fancyfoot[L]{Discussion Partners:}
+    %%%%%
+
+    \begin{itemize}
+    \item \textbf{Due Date:} \textbf{Thursday, March 6th, 23:59}
+    \item \textbf{Late submission} will be accepted \textbf{without} penalty until \textbf{Saturday, March 8th, 23:59}.
+    \item \textbf{No submissions will be accepted after March 8th, 23:59.}
+    \end{itemize}
+
+    %Problem 1
+    \begin{tcolorbox}[title={Problem 1 (Optimizing Radix Sort for Sensor Data, 35 points)}] \setlength\parindent{1em}
+        
+    A smart city infrastructure system collects sensor readings from $n$ different locations every second. Each sensor generates an integer in the range of $[0,M)$ representing environmental data, such as temperature, air quality, or traffic flow. To efficiently process and analyze this data in real-time, your goal is to sort the sensor readings as quickly as possible using radix sort. 
+
+    \begin{enumerate}[(a)]
+    \item Recall that the radix sort algorithm we learned in class utilizes counting sort as a subroutine, and achieves a worst case runtime of $\Theta(d(n+k))$. In short sentences, explain the meaning of $d$, $n$, and $k$ in this expression.
+    \item To optimize the runtime of radix sort (using counting sort as the subroutine), you must choose appropriate values for $d$ and $k$. For each of the following scenarios, determine the best possible asymptotic (worst-case) runtime of radix sort in terms of $n$. Also, specify the values of $d$ and $k$ (as functions of $n$) that achieve this runtime, and briefly justify why your choice leads to an (asymptotically) optimal runtime.
+
+    \textbf{Example:} If $M=n$, the best asymptotic runtime you can get is $\Theta(n)$ by picking $d=1$ and $k=n$. This is optimal because $d$ needs to be at least $1$, so the runtime is at least $\Omega(1(n+k))=\Omega(n)$. (Your justification might be very different for the following cases.)
+    
+    \begin{enumerate}[(i)]
+        \item $M=n^3$.
+        \item $M=2^n$.
+        \item $M=n!$.
+    \end{enumerate}
+    (\textit{Hint for (ii) and (iii): First, express the runtime in terms of $n$ and $k$. Then, analyze the asymptotic runtime separately for the cases $k\leq n$ and $k\geq n$. Finally, think about how these two expressions change with $k$.})
+    \end{enumerate}
+    \end{tcolorbox}
+    %Write your solution here!
+
+    \section*{Solution}
+        \textbf{(a)}
+        \begin{itemize}
+            \item $n$ is the number of sensor readings to be sorted.
+            \item $k$ is the range of each digit in the counting sort subroutine.
+            \item $d$ is the number of digits required to represent the numbers in the chosen base, which is determined by $d = \log_k M$, where $M$ is the range of sensor readings.
+        \end{itemize}
+        
+        \textbf{(b)}
+        
+        \begin{enumerate}[(i)]
+            \item \textbf{Case: $M = n^3$}
+        
+            Choose $k = \Theta(n)$. Then,
+            \[
+            d = \log_k (n^3) = \log_n (n^3) = 3.
+            \]
+            Since each pass of counting sort takes $\Theta(n+k) = \Theta(n)$ time (because $k = \Theta(n)$), the total runtime is
+            \[
+            \Theta(3 \cdot n) = \Theta(n).
+            \]
+            This is optimal because we minimize the number of passes and the cost per pass remains linear in $n$.
+            
+            \item \textbf{Case: $M = 2^n$}
+        
+            Again, choose $k = \Theta(n)$. Then,
+            \[
+            d = \log_k (2^n) = \frac{n}{\log_2 k} = \Theta\!\Big(\frac{n}{\log n}\Big).
+            \]
+            Each pass takes $\Theta(n+k) = \Theta(n)$, so the overall runtime is
+            \[
+            \Theta\!\Big(\frac{n}{\log n} \cdot n\Big) = \Theta\!\Big(\frac{n^2}{\log n}\Big).
+            \]
+            This choice optimally balances the number of passes against the per-pass cost.
+            
+            \item \textbf{Case: $M = n!$}
+        
+            In class, we have already showed that $\log (n!) = \Theta(n\log n)$. Again, set $k = \Theta(n)$, so that
+            \[
+            d = \log_k (n!) = \Theta\!\left(\frac{n\log n}{\log n}\right) = \Theta(n).
+            \]
+            With each pass costing $\Theta(n+k) = \Theta(n)$, the total runtime becomes
+            \[
+            \Theta(n \cdot n) = \Theta(n^2).
+            \]
+            Choosing $k = \Theta(n)$ minimizes the combined cost of the number of passes and the per-pass work.
+        \end{enumerate}
+    
+
+    \newpage
+
+    %Problem 2
+    \begin{tcolorbox}[title={Problem 2 (Rod Cutting without Repetition, 30 pts)}] \setlength\parindent{1em}
+    
+    Recall that in the (vanilla) \emph{rod cutting problem} we are given a rod of length $n$ and a list of $n$ prices (assume all prices are positive), where $p_i$ is the price fetched by a piece of length $i$. The goal is to calculate the maximum revenue you can generate from cutting the rod.
+
+    \vspace{1em}
+    
+    In the \emph{rod cutting without repetition} problem, your discerning customers desire to be unique, and hence refuse to buy a length of rod that has been bought before (weird assumption, I know. But let's say this customer is an enthusiastic rod collector, and aims to collect rods of different lengths \rule[1.3ex]{.25em}{1pt}\kern-.1em%
+    \reflectbox{\small\ttfamily/}%
+    \kern-.1em\rule[-.2ex]{.4em}{1pt}%
+    \makebox{{\raisebox{.15em}{{\large\textcircled{
+    \ttfamily\kern-.35em%
+    \rotatebox[origin=t]{-120}{\bfseries\scriptsize`\kern-.3ex`}%
+    \kern-.15em\rotatebox{-45}{\bfseries\scriptsize)}}}}%
+    \rule[-.2ex]{.4em}{1pt}\kern-.1em{\small\ttfamily/}%
+    \kern-.1em\rule[1.3ex]{.25em}{1pt}}}). Namely, even if you cut two pieces of length $i$, the total contribution to revenue from these pieces is just $p_i$ (not $2p_i$ as in the vanilla version).
+
+    \vspace{1em}
+    
+    In this problem, you will design a dynamic programming algorithm for solving the rod cutting without repetition in polynomial time. 
+    
+    \begin{enumerate}[(a)]
+    \item  Start by writing a recurrence relation for this problem (make sure to state clearly what the base cases are) and justifying its correctness (i.e.~why does this problem exhibit optimal substructure). In class, our recurrence relation had just one parameter, the length of the rod. Here, you can introduce the function $T(n,i)$ with two parameters $n$ and $i$, that is equal to the optimal revenue for the rod of length $n$ when we cut it into pieces of length at most $i$. You can then write the recurrence for $T(n,i)$.
+    \item Next, write pseudo-code for your algorithm (either memoized recursion or bottom-up) and (very briefly) justify its run-time.
+    \end{enumerate}
+    \end{tcolorbox}
+    %Write your solution here!
+    \section*{Solution}
+        Let \(T(n,i)\) represents the optimal revenue for the rod of length \(n\) when we cut it into pieces of length at most \(i\) (with each piece length used at most once).
+        
+        \textbf{(a)}
+    
+        \[
+        T(n,i) =
+        \begin{cases}
+        0, & \text{if } n = 0,\\[1mm]
+        -\infty, & \text{if } n > 0 \text{ and } i = 0,\\[1mm]
+        \max\Big\{ T(n, i-1),\; p_i + T(n-i, i-1) \Big\}, & \text{if } n \ge i,\\[1mm]
+        T(n, i-1), & \text{if } n < i.
+        \end{cases}
+        \]
+        
+        \begin{itemize}
+            \item \textbf{Base Cases:}
+            \begin{itemize}
+                \item \(T(0,i) = 0\) for all \(i\), since a rod of length 0 yields zero revenue.
+                \item \(T(n,0) = -\infty\) for \(n > 0\) because if no pieces are available, we cannot obtain any revenue.
+            \end{itemize}
+            \item \textbf{Recurrence:} For \(n \ge i\), we have two choices:
+            \begin{enumerate}
+                \item \emph{Do not use} the piece of length \(i\). In this case, the maximum revenue is \(T(n, i-1)\).
+                \item \emph{Use} the piece of length \(i\), gaining revenue \(p_i\), and then solve the subproblem for the remaining rod of length \(n-i\) with pieces up to \(i-1\) (i.e., \(T(n-i, i-1)\)). Note that even if more than one piece of length \(i\) could fit, we can only count it once.
+            \end{enumerate}
+            \item If \(n < i\), the piece of length \(i\) cannot be used, so we simply have \(T(n,i) = T(n,i-1)\).
+        \end{itemize}
+        
+        \textbf{Optimal Substructure:}  
+        The decision to include or exclude a piece of a particular length \(i\) leads to subproblems involving a smaller rod length and a reduced set of available pieces. Since the optimal solution to the entire problem is composed of optimal solutions to these subproblems and the recurrence covers all possible cuttings, the problem exhibits optimal substructure.
+        
+        \vspace{1em}
+        
+        \textbf{(b)}
+        
+        We use a bottom-up dp solution that fills in a table \(T[i][j]\) where \(T[i][j]\) denotes the maximum revenue for a rod of length \(i\) using pieces of lengths at most \(j\).
+
+        \bigskip
+        
+        \textbf{Pseudocode:}
+
+        \par\noindent\rule{\textwidth}{0.4pt}
+        \smallskip        
+        \textsc{RodCuttingWithoutRepetition}$(n, p)$
+        \begin{algorithmic}[1]
+            \STATE Initialize a 2D array $T[0 \ldots n][0 \ldots n]$
+            \FOR{$j \gets 0$ \textbf{to} $n$}
+                \STATE $T[0][j] \gets 0$
+            \ENDFOR
+            \FOR{$i \gets 1$ \textbf{to} $n$}
+                \STATE $T[i][0] \gets -\infty$
+            \ENDFOR
+            \FOR{$j \gets 1$ \textbf{to} $n$}
+                \FOR{$i \gets 1$ \textbf{to} $n$}
+                    \IF{$i \geq j$}
+                        \STATE $T[i][j] \gets \max\{\,T[i][j-1],\; p[j] + T[i-j][j-1]\,\}$
+                    \ELSE
+                        \STATE $T[i][j] \gets T[i][j-1]$
+                    \ENDIF
+                \ENDFOR
+            \ENDFOR
+            \RETURN $T[n][n]$
+        \end{algorithmic}
+        \smallskip
+        \par\noindent\rule{\textwidth}{0.4pt}
+        
+        \textbf{Runtime Justification:}
+        \begin{itemize}
+            \item \textbf{Initialization:} 
+            \begin{itemize}
+                \item The first \texttt{for} loop (lines 2--4) initializes $T[0][j]$ for $j = 0$ to $n$, taking $O(n)$ time.
+                \item The second \texttt{for} loop (lines 5--7) initializes $T[i][0]$ for $i = 1$ to $n$, taking another $O(n)$ time.
+            \end{itemize}
+            \item \textbf{Table Filling:} 
+            \begin{itemize}
+                \item The nested loops (lines 8--15) iterate over $j = 1$ to $n$ and, for each $j$, over $i = 1$ to $n$. This results in $n \times n = n^2$ iterations.
+                \item Within each iteration, the operations (comparison, addition, and \texttt{max} computation) take constant time, i.e., $O(1)$.
+            \end{itemize}
+            \item \textbf{Overall Runtime:} 
+            \begin{itemize}
+                \item The initialization steps contribute $O(n)$ time each.
+                \item The table filling step contributes $O(n^2)$ time.
+                \item Thus, the \underline{total runtime} is $O(n) + O(n) + O(n^2) = O(n^2)$.
+            \end{itemize}
+        \end{itemize}
+    \newpage
+
+    %Problem 3 
+    \begin{tcolorbox}[title={Problem 3 (The Coin Game, 35 points)}] \setlength\parindent{1em}
+        
+    Consider a row of $n$ coins of values $v_1, v_2, \dots, v_n$, where $n$ is even. A turn-based game is being played between
+    $2$ players where they alternate turns. In each turn, a player selects either the first or last coin from the
+    row, removes it from the row permanently, and receives the value of the coin. We want an algorithm that
+    determines the maximum possible amount of money you can definitely win if you move first (assume your
+    opponent will also play to maximize the amount they get). To this end, we will use dynamic programming.
+    Define the subproblems $\mathsf{MaxGain}(i, j)$ (for $i \leq j$) to be the maximum guaranteed payoff for the first player if given the subarray $[v_i,  \dots, v_j]$.
+    \begin{enumerate}[(a)]
+    \item Suppose the row of coins is $A=[1,1,1,2,2,2]$. If you move first and try to maximize your gains, how much money can you definitely win regardless
+    of the opponent’s moves? Describe in words your optimal play strategy for this particular instance.
+    \item State the base cases for $\mathsf{MaxGain}(i, j)$ and their values.
+    \item Give the overall DP algorithm for  $\mathsf{MaxGain}$ (just stating the recurrence is sufficient). Justify the correctness and runtime of your proposed algorithm.
+
+    \end{enumerate}
+    \end{tcolorbox}
+    
+    %Write your solution here!
+    \section*{Solution}
+        \textbf{(a)}
+        
+        I can guarantee a payoff of \(\mathbf{5}\). 
+        
+        I will start with the last coin (with value 2). This move forces the remaining coins into a configuration where, regardless of whether my opponent picks from the beginning or the end, I can
+        always continue with moves that secure me a total gain of 5 (since I can always get one of the two remaining 2s).
+        \bigskip
+        
+        \textbf{(b)} Base Cases for \(\mathsf{MaxGain}(i,j)\):
+        \begin{itemize}
+            \item \textbf{Single Coin:} When \(i = j\), there is only one coin available. Thus,
+            \[
+            \mathsf{MaxGain}(i,i) = v_i.
+            \]
+            \item \textbf{Two Coins:} When \(j = i+1\), there are two coins available. Since the first player can choose the coin with the higher value,
+            \[
+            \mathsf{MaxGain}(i,i+1) = \max\{v_i, v_{i+1}\}.
+            \]
+        \end{itemize}
+        
+        \bigskip
+        
+        \textbf{(c)}
+
+        \textbf{1. Subproblem:}  
+        Define \(\mathsf{MaxGain}(i,j)\) as the maximum guaranteed payoff for the first player when the game is played on the subarray \([v_i, v_{i+1}, \dots, v_j]\). This subproblem represents the situation in which only the coins from positions \(i\) to \(j\) remain, and both players play optimally from that point onward.
+        
+        \bigskip
+        
+        \textbf{2. Guess:}  
+        At any turn, the first player has two choices:  
+        \begin{itemize}
+            \item Pick the coin \(v_i\) at the left end.
+            \item Pick the coin \(v_j\) at the right end.
+        \end{itemize}
+        
+        \bigskip
+        
+        \textbf{3. Recurrence:}  
+        When the first player makes a move, the opponent is left with a smaller subarray and will choose in a way that minimizes the first player's future gain. Hence, the recurrence is:
+        \[
+        \mathsf{MaxGain}(i,j) = \max\left\{
+        \begin{array}{l}
+        v_i + \min\{\mathsf{MaxGain}(i+2,j),\, \mathsf{MaxGain}(i+1,j-1)\},\\[1mm]
+        v_j + \min\{\mathsf{MaxGain}(i+1,j-1),\, \mathsf{MaxGain}(i,j-2)\}
+        \end{array}
+        \right.
+        \]
+        The two cases represent:
+        \begin{itemize}
+            \item If the first player picks \(v_i\), the opponent will then choose either \(v_{i+1}\) or \(v_j\), leaving the first player with subarrays \([v_{i+2},\dots,v_j]\) or \([v_{i+1},\dots,v_{j-1}]\). Since the opponent minimizes your gain, you receive \(v_i\) plus the minimum of the two resulting \(\mathsf{MaxGain}\) values.
+            \item Similarly, if the first player picks \(v_j\), the gain is \(v_j\) plus the minimum between \(\mathsf{MaxGain}(i+1,j-1)\) and \(\mathsf{MaxGain}(i,j-2)\).
+        \end{itemize}
+        
+        \textbf{Base Cases:}  
+        \begin{itemize}
+            \item When \(i = j\): \(\mathsf{MaxGain}(i,i) = v_i\).
+            \item When \(j = i+1\): \(\mathsf{MaxGain}(i,i+1) = \max\{v_i, v_{i+1}\}\).
+        \end{itemize}
+        
+        \bigskip
+        
+        \textbf{4. Implementation Approach:}  
+        We use a bottom-up dynamic programming approach. We fill in a 2D DP table where each entry \(\texttt{DP}[i][j]\) stores \(\mathsf{MaxGain}(i,j)\), starting from the smallest subarrays (base cases) and working up to the entire array \([v_1,\dots,v_n]\).
+        
+        \bigskip
+        
+        \textbf{Correctness and Runtime Justification:}  
+        \begin{itemize}
+            \item \emph{Correctness:}  
+            The recurrence correctly models the decision process at each turn by considering both choices and accounting for the opponent’s optimal (minimizing) response. Since the problem exhibits optimal substructure and overlapping subproblems, filling in the DP table in a bottom-up manner ensures that every subproblem is solved optimally before being used in a larger problem.
+            
+            \item \emph{Runtime:}  
+            The number of distinct subproblems is \(O(n^2)\) because there are \(\Theta(n^2)\) pairs \((i,j)\) with \(1 \leq i \leq j \leq n\). Each subproblem is solved in \(O(1)\) time (performing a constant number of arithmetic and comparison operations). Therefore, the overall time complexity is \(O(n^2)\). The space complexity is also \(O(n^2)\) due to the size of the DP table.
+        \end{itemize}
+
+    \newpage
+
+    
+    
+\end{document}
