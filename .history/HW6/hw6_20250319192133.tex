@@ -31,7 +31,7 @@
     %Put your name and Net ID here
 	\fancyhead[L]{Name: Nick Zhu \\ Net ID: xz4687}
     %Write your collaborators' names here
-    \fancyfoot[L]{Discussion Partners: Jueying Zhu}
+    \fancyfoot[L]{Discussion Partners:}
     %%%%%
 
     %Problem 1
@@ -238,7 +238,7 @@
     
     \medskip
     
-    \textbf{(c)}
+    \textbf{(c)} \emph{DP Algorithm:}
     
     We define \(DP[i,j]\) to be the minimum number of coins needed to make change for \(j\) cents using the denominations \(\{s_1, s_2, \dots, s_i\}\).
     
@@ -252,7 +252,7 @@
     \infty, & \text{if } j>0.
     \end{cases}
     \]
-    This reflects that zero coins are needed to make change for 0 cents.
+    This reflects that zero coins are needed to make change for 0 cents, and without any denominations (other than the implicit coin \(1\) if \(i\ge 1\)) no positive amount can be made.
     
     \medskip
     
@@ -266,7 +266,7 @@
     \end{array}
     \Biggr\}.
     \]
-    When considering denomination \(s_i\), we have two options:
+    That is, when considering denomination \(s_i\), we have two options:
     \begin{enumerate}
         \item Do not use the coin \(s_i\): in which case, the optimal solution is \(DP[i-1,j]\).
         \item Use at least one coin of denomination \(s_i\): we then add one coin and solve the subproblem \(DP[i,\, j-s_i]\).
@@ -299,8 +299,8 @@
     
     \underline{Correct Base Case:} \\
     \begin{itemize}
-        \item When \(j=0\): No coins are needed to make 0 cents.
-        \item When \(i=0\) and \(j>0\): With no coin denominations available, it is impossible to form any positive amount; hence, we define \(DP[0,j]=\infty\) for \(j>0\).
+        \item When \(j=0\): No coins are needed to make 0 cents, so \(DP[i,0]=0\) for all \(0\le i\le n\).
+        \item When \(i=0\) and \(j>0\): With no coin denominations available, it is impossible to form any positive amount; hence, we define \(DP[0,j]=\infty\) (or a sufficiently large number) for \(j>0\).
     \end{itemize}
     
     \newpage

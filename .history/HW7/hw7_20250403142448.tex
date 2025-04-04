@@ -1,0 +1,157 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{enumerate}
+\usepackage{tikz}
+
+\usepackage{algorithmic}
+
+\newcommand{\zo}{\{0,1\}}
+\usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning}
+\tikzset
+{
+    treenode/.style = {circle, draw=black, align=center, 
+                          minimum size=1cm, anchor=center}
+}
+
+\begin{document}
+
+    \setlength{\headheight}{26pt}
+    \pagestyle{fancy}
+    \fancyhead[C]{\textbf{Basic Algorithms (Section 5)}\\Spring 2025}
+    \fancyhead[R]{HW7 (Due 4/3 23:59)\\ Instructor: Jiaxin Guan}
+    \fancyfoot[C]{}
+    \fancyfoot[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+    
+    %%%% EDIT THIS PART 
+    %Put your name and Net ID here
+	\fancyhead[L]{Name: Nick Zhu \\ Net ID: xz4687}
+    %Write your collaborators' names here
+    \fancyfoot[L]{Discussion Partners:}
+    %%%%%
+
+    %Problem 1
+    \begin{tcolorbox}[title={Problem 1 (Interval Scheduling with Revenue, 35 pts)}] \setlength\parindent{1em}
+        During the lecture we considered the activity selection/interval scheduling problem, where the goal is to schedule as many non-overlapping activities/intervals as possible. 
+        
+        Now suppose instead of maximizing the number of activities scheduled, we modify the problem by adding ``revenue'' value $r_i$ to each activity $I_i$, for all $i$. The modified goal is to find a set of non-overlapping activities $S'\subseteq S$ that maximizes the total revenue, defined as \[
+        \sum_{I_i\in S'} r_i.\]
+
+        \begin{enumerate}[(a)]
+        \item Does the greedy algorithm presented in class correctly solve
+        this problem? If yes, provide a brief justification. If no, provide a counterexample.
+        \item What about the improved DP algorithm (the one with $O(n\log n)$ runtime) presented in class? Can it be easily adapted to solve this problem? If yes, briefly describe what changes need to be made. If no,  provide a brief justification.
+        \end{enumerate}
+            
+    \end{tcolorbox}
+    %Write your solution here!
+    \section*{Solution}
+
+    \subsection*{(a)}
+    The greedy algorithm presented in class does not correctly solve this problem. 
+
+    \medskip
+    \noindent\textbf{Counterexample:} Consider the following intervals:
+    \begin{itemize}
+        \item \( I_1 \): starts at time 0, ends at time 2, with revenue \( r_1 = 1 \).
+        \item \( I_2 \): starts at time 2, ends at time 4, with revenue \( r_2 = 1 \).
+        \item \( I_3 \): starts at time 0, ends at time 4, with revenue \( r_3 = 3 \).
+    \end{itemize}
+    The greedy algorithm based on the earliest finish time would select \( I_1 \) and \( I_2 \), yielding a total revenue of \( 1 + 1 = 2.\)
+    However, the optimal solution is to select \( I_3 \) alone, which gives a revenue of 3.
+    
+    \subsection*{(b)}
+    Yes, the improved DP algorithm can be adapted to solve this problem.
+    
+    \medskip
+    \noindent For this problem, we need to includethe revenue of each interval into the recurrence. After sorting the intervals by finish time, define:
+    \[
+    \text{DP}[j] = \max\{r_j + \text{DP}[p(j)],\, \text{DP}[j-1]\},
+    \]
+    \begin{itemize}
+        \item \( r_j \) is the revenue of interval \( I_j \).
+        \item \( p(j) \) is the index of the rightmost interval that finishes before \( I_j \) starts (i.e., the largest index \( i < j \) such that \( f_i \le s_j \)).
+    \end{itemize}
+    
+    \medskip
+    \noindent With this recurrence, the algorithm chooses between including interval \( I_j \) (and adding its revenue plus the best revenue from compatible intervals) or excluding \( I_j \) (and taking the best revenue from the previous intervals). Since \( p(j) \) can be computed in \( O(\log n) \) time using binary search, the overall runtime remains \( O(n \log n) \).
+    
+
+
+    \newpage
+
+
+    %Problem 2
+    \begin{tcolorbox}[title={Problem 2 (Min Interval Scheduling, 35 pts)}] \setlength\parindent{1em}
+        In the interval scheduling problem, we are given a set of intervals $S=\{[s_1, f_1],\dots,[s_n,f_n]\}$ and we want to find the largest subset $S'\subseteq S$ such that no two intervals in $S'$ overlap. 
+
+        Now suppose that instead of wanting to prevent overlap, we want to prevent having any empty areas. That is, we want that for every point $p \in [a, b]$, there is some interval $I = [s,f] \in S'$ such that $s \leq p \leq f$. We say that such a set $S'$ \emph{covers} $[a,b]$.
+        
+        For example, on input $S = \{[0,5], [2,6], [3, 8], [7, 10], [9, 10]\}$, with target $[a,b] = [0, 10]$ an optimal covering is $S' = \{[0,5], [3,8], [7, 10]\}$.
+        
+        Given a set of $n$ intervals $S$ and a target interval $[a,b]$, we want to construct an efficient greedy algorithm to find the smallest $S' \subseteq S$ such that $S'$ covers $[a,b]$.
+        
+        \begin{enumerate}[(a)]
+            \item Consider the greedy strategy where we always choose the interval $I$ which covers the largest amount of uncovered area of the target interval. Construct a counterexample such that this greedy strategy leads to a suboptimal solution.
+            \item Give a greedy strategy that is safe. Prove that your greedy choice combined with an optimal solution to the subproblem remaining (after you make your greedy choice) is an optimal solution to the problem.
+            \item Describe a full algorithm that implements your greedy strategy and analyze its running time. For full credit, your algorithm should run in time $O(n\log n)$.
+        \end{enumerate}
+    \end{tcolorbox}
+    %Write your solution here!
+
+    
+    \newpage
+
+    
+    %Problem 3
+    \begin{tcolorbox}[title={Problem 3 (Huffman Encoding Practice, 15 points)}] \setlength\parindent{1em}
+        Consider a file that uses the symbols $\{A,B,C,D,E,F,G\}$ with the corresponding frequencies:
+        
+        \begin{center}
+            \begin{tabular}{c|c|c|c|c|c|c}
+               $f_A$  & $f_B$ & $f_C$ & $f_D$ & $f_E$ & $f_F$ & $f_G$ \\
+               \hline
+                0.08 & 0.12 & 0.14 & 0.15 & 0.28 & 0.13 & 0.1 \\
+            \end{tabular}
+        \end{center}
+
+        Find an optimal prefix code based on Huffman’s algorithm (using $0$ and $1$ only). You should give out the following (no justification needed):
+        
+        \begin{enumerate}[(a)]
+        \item The derived Huffman tree.
+        \item The mapping from symbols to bit strings. (You can fill in the chart below)
+        \begin{center}
+            \begin{tabular}{c|c}
+               Symbol & Encoding \\ 
+               & (e.g. 1101)\\ \hline
+                A & \\ \hline
+                B & \\ \hline
+                C & \\ \hline
+                D & \\ \hline
+                E & \\ \hline
+                F & \\ \hline
+                G & \\            
+            \end{tabular}
+        \end{center}
+        \item $ABL$ (Average Bits per Letter) of your encoding.
+        \end{enumerate}    
+    \end{tcolorbox}
+    %Write your solution here!
+
+    \newpage
+
+    % Problem 4
+    \begin{tcolorbox}[title={Problem 4 (Huffman Encoding, Short Answers, 15 points)}] \setlength\parindent{1em}
+        \begin{enumerate}[(a)]
+        \item In general, for a given set of letters and corresponding frequencies, is Huffman encoding always ``length-unique''? That is, for any letter, will the length of its encoding always be the same across all valid Huffman trees constructed from the frequencies? Note that different letters may have the same frequency in the general case. If yes, justify in a few sentences. Otherwise, provide a counterexample.
+        \item Is it possible that in an \emph{optimal} prefix code, a letter with a lower frequency has a shorter encoding than a
+        letter with a higher frequency? If no, explain why not in a few sentences. Otherwise, provide an explicit example of the letter frequencies and the corresponding prefix code.
+        \end{enumerate}    
+    \end{tcolorbox}
+    %Write your solution here!    
+    
+\end{document}

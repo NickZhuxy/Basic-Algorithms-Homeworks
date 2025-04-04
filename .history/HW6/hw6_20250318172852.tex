@@ -1,0 +1,156 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{enumerate}
+\usepackage{tikz}
+
+\usepackage{algorithmic}
+
+\newcommand{\zo}{\{0,1\}}
+\usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning}
+\tikzset
+{
+    treenode/.style = {circle, draw=black, align=center, 
+                          minimum size=1cm, anchor=center}
+}
+
+\begin{document}
+
+    \setlength{\headheight}{26pt}
+    \pagestyle{fancy}
+    \fancyhead[C]{\textbf{Basic Algorithms (Section 5)}\\Spring 2025}
+    \fancyhead[R]{HW6 (Due 3/20 23:59)\\ Instructor: Jiaxin Guan}
+    \fancyfoot[C]{}
+    \fancyfoot[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+    
+    %%%% EDIT THIS PART 
+    %Put your name and Net ID here
+	\fancyhead[L]{Name:  \\ Net ID: }
+    %Write your collaborators' names here
+    \fancyfoot[L]{Discussion Partners:}
+    %%%%%
+
+    %Problem 1
+    \begin{tcolorbox}[title={Problem 1 (Knapsack, Take II, 50 pts)}] \setlength\parindent{1em}
+    
+     Alice and Bob are siblings who share a collection of items. There are \(n\) items, and each item \(i\) has a size \(s_i\), as well as separate valuations for Alice \(v_i^A\) and for Bob \(v_i^B\). Each sibling has their own knapsack with a capacity \(S\). Alice and Bob can pick disjoint subsets of items to maximize their combined valuation, with the constraint that the total size of the items they pick does not exceed the capacity of their respective knapsacks. Notice their subsets of items are disjoint because they cannot both pack the same item.
+
+        \medskip
+        
+        Put formally, we want to maximize $\sum_{i\in I_A} v_i^A+\sum_{i\in I_B} v_i^B$ subject to the constraints $\sum_{i\in I_A} s_i\leq S$ and $\sum_{i\in I_B} s_i\leq S$. $I_A, I_B\subseteq\{1,2,\ldots, n\}$ represent the subsets of items that Alice and Bob each pick, and we require $I_A$ and $I_B$ to be disjoint ($I_A\cap I_B=\phi$). For simplicity, we only need to output the maximum combined valuation for Alice and Bob, not the subsets. 
+
+        \begin{enumerate}[(a)]
+            \item Find the max combined value Alice and Bob can get for the following input:
+            \begin{itemize}
+                \item \( n = 3 \)
+                \item Item 1: \( s_1 = 2, v_1^A = 3, v_1^B = 5 \)
+                \item Item 2: \( s_2 = 1, v_2^A = 4, v_2^B = 2 \)
+                \item Item 3: \( s_3 = 3, v_3^A = 7, v_3^B = 6 \)
+                \item Capacity of knapsacks \(S = 4\).
+            \end{itemize} 
+            \item Give a DP algorithm to solve this variant of the knapsack problem in $O(nS^2)$. Justify the correctness and runtime of your proposed algorithm. 
+            \item How would you adapt your algorithm in part (b) if Alice and Bob have different knapsack capacities, \(S_A\) and \(S_B\), respectively? And how will the runtime of your algorithm change? You do not need to justify correctness for this part.
+        \end{enumerate}
+    \end{tcolorbox}
+    %Write your solution here!
+
+    \section*{Solution}
+
+    \subsection*{(a)}
+    \begin{itemize}
+        \item Assign item 1 to Bob: uses capacity \(2\) and gives value \(5\).
+        \item Assign items 2 and 3 to Alice: the total size is \(1+3=4\) (which is within the capacity) and the combined value is \(4+7=11\).
+    \end{itemize}
+    The total combined value is:
+    \[
+    5 + 11 = 16.
+    \]
+    
+    It can be verified by checking all feasible assignments that \(16\) is the maximum combined value achievable. Thus, the answer for part (a) is \(\boxed{16}\).
+    
+    \subsection*{(b) DP Algorithm (Runtime: \(O(nS^2)\))}
+    
+    We describe a dynamic programming algorithm.
+    
+    \paragraph{DP State:} Let 
+    \[
+    DP(i,j,k)
+    \]
+    be the maximum combined value achievable by considering the first \(i\) items, where:
+    \begin{itemize}
+        \item \(j\) is the total size used in Alice's knapsack (with \(0\le j\le S\)), and
+        \item \(k\) is the total size used in Bob's knapsack (with \(0\le k\le S\)).
+    \end{itemize}
+    
+    \paragraph{Base Case:}
+    \[
+    DP(0,j,k) = 0 \quad \text{for all } 0\le j,k \le S.
+    \]
+    
+    \paragraph{Recurrence:} For each item \(i=1,2,\ldots,n\) and for all \(0\le j,k\le S\), update as follows:
+    \[
+    DP(i,j,k) = \max \begin{cases}
+    DP(i-1, j, k) & \text{(do not take item } i\text{)}, \\[1mm]
+    DP(i-1, j-s_i, k) + v_i^A & \text{if } j \ge s_i \quad \text{(assign item } i \text{ to Alice)}, \\[1mm]
+    DP(i-1, j, k-s_i) + v_i^B & \text{if } k \ge s_i \quad \text{(assign item } i \text{ to Bob)}.
+    \end{cases}
+    \]
+    Here, the conditions \(j\ge s_i\) or \(k\ge s_i\) ensure that adding item \(i\) does not exceed the knapsack capacity.
+    
+    \paragraph{Final Answer:}
+    The maximum combined value is given by
+    \[
+    \max_{0\le j,k\le S} DP(n,j,k).
+    \]
+    
+    \paragraph{Correctness and Runtime:}
+    The recurrence examines every possibility for each item—assigning it to Alice, to Bob, or leaving it out—while ensuring the capacity constraints are respected. Since the DP table has \(n\) layers and for each layer we iterate over \(O(S^2)\) states, the overall runtime is \(O(nS^2)\).
+    
+    \subsection*{(c) Adaptation for Different Knapsack Capacities \(S_A\) and \(S_B\)}
+    If Alice and Bob have different capacities \(S_A\) and \(S_B\), respectively, we modify the DP state to:
+    \[
+    DP(i,j,k)
+    \]
+    where \(j\) now ranges from \(0\) to \(S_A\) and \(k\) ranges from \(0\) to \(S_B\). The recurrences remain the same:
+    \[
+    DP(i,j,k) = \max \begin{cases}
+    DP(i-1, j, k), \\[1mm]
+    DP(i-1, j-s_i, k) + v_i^A \quad \text{if } j \ge s_i, \\[1mm]
+    DP(i-1, j, k-s_i) + v_i^B \quad \text{if } k \ge s_i.
+    \end{cases}
+    \]
+    The final answer is:
+    \[
+    \max_{0\le j\le S_A,\;0\le k\le S_B} DP(n,j,k).
+    \]
+    
+    \paragraph{Runtime:}
+    The size of the DP table is \(O(nS_A S_B)\). Thus, the runtime of the algorithm is \(O(nS_A S_B)\).
+    
+
+    \newpage
+
+    %Problem 2
+    \begin{tcolorbox}[title={Problem 2 (Make Change, 50 points)}] \setlength\parindent{1em}
+        
+     Given a set of coin denominations $S=\{s_1, s_2,\dots, s_n\}$, consider the problem of making change for $m$ cents using the fewest
+        number of coins. Assume that the set of coin denominations consists of only positive integers and that for each denomination you can use an unlimited number of them. For example, if $S=\{1, 5, 10\}$ and $m=17$, we can make the change of $17$ cents by taking one $10$, one $5$, and two $1$'s, or by taking seventeen $1$'s, but the former is preferred, as it uses a minimal number of coins ($4$ in this case).
+
+    \begin{enumerate}[(a)]
+    \item Let $S=\{1, 5, 10, 25\}$, and $m=83$, what is the minimal number of coins to make the change? Also, give the number of coins for each denomination used.
+    \item Let $S=\{1, 7, 10, 15\}$, and $m=36$, what is the minimal number of coins to make the change? Also, give the number of coins for each denomination used.
+    \item Give a DP algorithm to solve the make change problem in $O(nm)$ time. Your algorithm only needs to output the minimal number of coins, not the detailed allocation. You may assume the denominations always include $1$, so there is always a way to make the change. Justify the correctness and runtime of your proposed algorithm. \textit{(Hint: Let $DP[i,j]$ denote the optimal solution for making a change of $j$ cents using denominations $\{s_1, s_2, \dots, s_i\}$)}
+    \end{enumerate}
+    \end{tcolorbox}
+    
+    %Write your solution here!
+    
+    \newpage
+
+    
+    
+\end{document}
